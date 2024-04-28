@@ -1,0 +1,77 @@
+def extraer_azul_saturado(imagen):
+    hsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
+    azul_bajo = np.array([100, 150, 50])  # Ajustar según necesidad
+    azul_alto = np.array([140, 255, 255])
+    mascara_azul = cv2.inRange(hsv, azul_bajo, azul_alto)
+    return mascara_azul
+
+def obtener_mascara_ideal():
+    mascara_ideal = np.zeros((40, 80), dtype=np.uint8)
+    mascara_ideal[5:-5, 10:-10] = 1
+    return mascara_ideal
+
+def calcular_correlacion(mascara, mascara_ideal):
+    correlacion = np.sum(mascara * mascara_ideal)
+    correlacion_normalizada = correlacion / np.sum(mascara_ideal)
+    return correlacion_normalizada
+
+def aplicarMSER_agrandar2(imagenes, margen):
+    mser = cv2.MSER_create()
+    mser.setDelta(3)
+    mser.setMinArea(400)
+    mser.setMaxArea(60000) 
+    mser.setMinDiversity(0.6)
+
+    resultados_mser = []
+    todas_las_cajas = []
+
+    for imagen in imagenes:
+        gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
+        gris_ecualizado = cv2.equalizeHist(gris)
+        regiones, _ = mser.detectRegions(gris_ecualizado)
+        cajas = []
+
+        for region in regiones:
+            x, y, w, h = cv2.boundingRect(region)
+            relacion = h / float(w)
+            if 0.3 <= relacion <= 0.9 and x > 50 and w > 20 and w < 800 and h > 50 and h < 900:
+                x1 = max(x - margen // 2, 0)
+                y1 = max(y - margen // 2, 0)
+                x2 = min(x + w + margen // 2, imagen.shape[1])
+                y2 = min(y + h + margen // 2, imagen.shape[0])
+                cajas.append((x1, y1, x2 - x1, y2 - y1))
+                cv2.rectangle(imagen, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+        resultados_mser.append(imagen)
+        todas_las_cajas.append(cajas)
+
+    return resultados_mser, todas_las_cajas
+
+# Supongamos que tienes las imágenes en 'random_imagenes2'
+resultados_mser, cajas_mser = aplicarMSER_agrandar2(random_imagenes2, 10)
+mascara_ideal = obtener_mascara_ideal()
+umbral = 10  # Ajusta el umbral de correlación
+tamano_fijo=(40, 80)  
+
+for i, (imagen, cajas) in enumerate(zip(resultados_mser, cajas_mser)):
+    for caja in cajas:
+        x, y, w, h = caja
+        recorte = imagen[y:y+h, x:x+w]
+        recorte_redimensionado = cv2.resize(recorte, (tamano_fijo[1], tamano_fijo[0]), interpolation=cv2.INTER_AREA)
+        mascara = extraer_azul_saturado(recorte_redimensionado)
+        score = calcular_correlacion(mascara, mascara_ideal)
+        
+        if score > umbral:
+            cv2.rectangle(imagen, (x, y), (x + w, y + h), (255, 0, 0), 2)  # Dibuja en rojo si pasa el umbral
+
+# Mostrar imágenes
+filas = 5
+columnas = 4
+fig, axes = plt.subplots(filas, columnas, figsize=(20, 10))
+axes = axes.ravel()
+for i, ax in enumerate(axes):
+    if i < len(resultados_mser):
+        ax.imshow(cv2.cvtColor(resultados_mser[i], cv2.COLOR_BGR2RGB))
+        ax.axis('off')
+plt.tight_layout()
+plt.show()
