@@ -3,7 +3,7 @@
 
 import argparse
 
-import panel_det
+#import panel_det
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
@@ -50,9 +50,19 @@ if __name__ == "__main__":
     # También habrá que extraer los vectores de características asociados (en la parte básica 
     # umbralizar imágenes, pasar findContours y luego redimensionar)
 
+
+    #----------------------------------------------------------------------------
+    
+
+
+
+    #------------------------------------------------------------------------------
+
     # 2) Load training and validation data
     # También habrá que extraer los vectores de características asociados (en la parte básica 
     # umbralizar imágenes, pasar findContours y luego redimensionar)
+
+
     gt_labels = ...
 
 
