@@ -12,35 +12,42 @@ from ocr_classifier import OCRClassifier
 
 class LdaNormalBayesClassifier(OCRClassifier):
     """
-    Classifier for Optical Character Recognition using LDA and the Bayes with Gaussian classifier.
+    Clasificador para el Reconocimiento Óptico de Caracteres utilizando LDA y el clasificador Bayes con distribución Gaussiana.
     """
 
     def __init__(self, ocr_char_size):
+        """
+        Inicializa el LdaNormalBayesClassifier con el tamaño de carácter dado.
+
+        :param ocr_char_size: Tamaño del carácter OCR.
+        """
         super().__init__(ocr_char_size)
         self.lda = None
         self.classifier = None
 
     def train(self, images_dict):
         """
-        Given character images in a dictionary of list of char images of fixed size, 
-        train the OCR classifier. The dictionary keys are the class of the list of images 
-        (or corresponding char).
+        Entrena el clasificador OCR dado un diccionario de imágenes de caracteres.
+        Las claves del diccionario son las clases de las listas de imágenes (o el carácter correspondiente).
+
+        :param images_dict: Diccionario con etiquetas como claves y listas de imágenes como valores.
         """
         X, y = self._extract_features_and_labels(images_dict)
 
-        # Perform LDA training
+        # Realiza el entrenamiento LDA
         self.lda = LinearDiscriminantAnalysis()
         X_reduced = self.lda.fit_transform(X, y)
 
-        # Train classifier
+        # Entrena el clasificador Bayes Normal 
         self.classifier = cv2.ml.NormalBayesClassifier_create()
         self.classifier.train(np.float32(X_reduced), cv2.ml.ROW_SAMPLE, np.int32(y))
 
     def predict(self, img):
         """
-        Given a single image of a character already cropped classify it.
+        Clasifica una imagen dada de un carácter ya recortado.
 
-        :img Image to classify
+        :param img: Imagen a clasificar.
+        :return: Clase predicha de la imagen.
         """
         feature = self._extract_feature(img)
         feature_reduced = self.lda.transform([feature])
@@ -49,7 +56,10 @@ class LdaNormalBayesClassifier(OCRClassifier):
 
     def _extract_features_and_labels(self, images_dict):
         """
-        Extract features and labels from the images dictionary.
+        Extrae características y etiquetas del diccionario de imágenes.
+
+        :param images_dict: Diccionario con etiquetas como claves y listas de imágenes como valores.
+        :return: Tupla (X, y) donde X es una lista de características e y es una lista de etiquetas.
         """
         X = []
         y = []
@@ -62,7 +72,10 @@ class LdaNormalBayesClassifier(OCRClassifier):
 
     def _extract_feature(self, img):
         """
-        Extract a single feature from an image.
+        Extrae una sola característica de una imagen aplanándola en un array 1D.
+
+        :param img: Imagen de la cual extraer características.
+        :return: Array 1D aplanado de la imagen.
         """
         return img.flatten()
 

@@ -369,75 +369,77 @@ if __name__ == "__main__":
         print(f"Error: Clasificador {args.classifier} no soportado.")
         exit()
     
-    
-    # Pruebas de Ejecuciones con todas las posibilidades
-    args = parser.parse_args()
+    #----------------------TROZO DE CÓDIGO QUE NOS PERMITE EJECUTAR TODAS LAS POSIBLES CONFIGURACIONES
+    # # Pruebas de Ejecuciones con todas las posibilidades
+    # args = parser.parse_args()
 
-    train_path = os.path.abspath(args.train_path)
-    validation_path = os.path.abspath(args.validation_path)
-    print(f"Train path: {train_path}")
-    print(f"Validation path: {validation_path}")
+    # train_path = os.path.abspath(args.train_path)
+    # validation_path = os.path.abspath(args.validation_path)
+    # print(f"Train path: {train_path}")
+    # print(f"Validation path: {validation_path}")
 
-    # Posibles configuraciones
-    classifiers = {
-        "svc": SVC(),
-        "knn": KNeighborsClassifier(),
-        "dtree": DecisionTreeClassifier()
-    }
+    # # Posibles configuraciones
+    # classifiers = {
+    #     "svc": SVC(),
+    #     "knn": KNeighborsClassifier(),
+    #     "dtree": DecisionTreeClassifier()
+    #     "lda_normal_bayes": LdaNormalBayesClassifier(ocr_char_size=(25, 25))
+    # }
 
-    features = {
-        "raw": pre_procesado_image,
-        "hog": extract_hog_features
-    }
+    # features = {
+    #     "raw": pre_procesado_image,
+    #     "hog": extract_hog_features
+    # }
 
-    dim_reductions = {
-        "none": None,
-        "pca": PCA(n_components=50)
-    }
+    # dim_reductions = {
+    #     "none": None,
+    #     "pca": PCA(n_components=50)
+    # }
 
-    for feature_name, feature_extractor in features.items():
-        train_images, train_labels = carga_imagenes_carpeta(train_path, feature_extractor)
-        validation_images, validation_labels = carga_imagenes_carpeta(validation_path, feature_extractor)
-        print(f"Loaded {len(train_images)} training images and {len(validation_images)} validation images.")
+    # for feature_name, feature_extractor in features.items():
+    #     train_images, train_labels = carga_imagenes_carpeta(train_path, feature_extractor)
+    #     validation_images, validation_labels = carga_imagenes_carpeta(validation_path, feature_extractor)
+    #     print(f"Loaded {len(train_images)} training images and {len(validation_images)} validation images.")
 
-        if len(train_images) == 0 or len(validation_images) == 0:
-            print("Error: No se cargaron imágenes. Verifique las rutas y el formato de los archivos.")
-            exit()
+    #     if len(train_images) == 0 or len(validation_images) == 0:
+    #         print("Error: No se cargaron imágenes. Verifique las rutas y el formato de los archivos.")
+    #         exit()
 
-        label_encoder = LabelEncoder()
-        combined_labels = train_labels + validation_labels
-        label_encoder.fit(combined_labels)
+    #     label_encoder = LabelEncoder()
+    #     combined_labels = train_labels + validation_labels
+    #     label_encoder.fit(combined_labels)
         
-        train_labels_encoded = label_encoder.transform(train_labels)
-        validation_labels_encoded = label_encoder.transform(validation_labels)
+    #     train_labels_encoded = label_encoder.transform(train_labels)
+    #     validation_labels_encoded = label_encoder.transform(validation_labels)
 
-        for dim_red_name, dim_reducer in dim_reductions.items():
-            if dim_reducer is None:
-                train_features = train_images
-                validation_features = validation_images
-            else:
-                dim_reducer.fit(train_images)
-                train_features = dim_reducer.transform(train_images)
-                validation_features = dim_reducer.transform(validation_images)
+    #     for dim_red_name, dim_reducer in dim_reductions.items():
+    #         if dim_reducer is None:
+    #             train_features = train_images
+    #             validation_features = validation_images
+    #         else:
+    #             dim_reducer.fit(train_images)
+    #             train_features = dim_reducer.transform(train_images)
+    #             validation_features = dim_reducer.transform(validation_images)
 
-            for clf_name, classifier in classifiers.items():
-                print(f"Training classifier: {clf_name}, Feature: {feature_name}, Dimensionality reduction: {dim_red_name}")
+    #         for clf_name, classifier in classifiers.items():
+    #             print(f"Training classifier: {clf_name}, Feature: {feature_name}, Dimensionality reduction: {dim_red_name}")
 
-                classifier.fit(train_features, train_labels_encoded)
-                predicted_labels = classifier.predict(validation_features)
+    #             classifier.fit(train_features, train_labels_encoded)
+    #             predicted_labels = classifier.predict(validation_features)
 
-                accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-                print(f"Accuracy = {accuracy}")
+    #             accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
+    #             print(f"Accuracy = {accuracy}")
 
-                cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-                #plot_confusion_matrix(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}")
-                plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}")
-                plt.show()
-                #cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-                #filename = f"confusion_matrix_{clf_name}_{feature_name}_{dim_red_name}.png"
-                #plot_confusion_matrix(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}", filename=filename)
-                #print(f"Confusion matrix saved as {filename}")
-    
+    #             cm = confusion_matrix(validation_labels_encoded, predicted_labels)
+    #             #plot_confusion_matrix(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}")
+    #             plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}")
+    #             plt.show()
+    #             #cm = confusion_matrix(validation_labels_encoded, predicted_labels)
+    #             #filename = f"confusion_matrix_{clf_name}_{feature_name}_{dim_red_name}.png"
+    #             #plot_confusion_matrix(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}", filename=filename)
+    #             #print(f"Confusion matrix saved as {filename}")
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    # -------------------------INFORMACIÓN ACERCA DE SALIDAS Y CONFIGURACIONES EJERCICIO 1 - 2 -------------------------------------------
     # BASES-ENLACE: https://www.aprendemachinelearning.com/clasificacion-de-imagenes-en-python/
     # Con la prueba de 5 imagenes, no irá indicando una matriz de confusión
     # - La matriz de confusión muestra la comparación entre las etiquetas verdaderas y las estiquetas
@@ -455,7 +457,7 @@ if __name__ == "__main__":
     # Total de imágenes cargadas: 15500
     # Loaded 38750 training images and 15500 validation images.
     # Accuracy =  0.9584516129032258
-
+    #--------------------------------------------------------------------------------------------------------------------------------------
     # EJERCICIO 2 - CAMBIOS:
     # Método de extracciones de características:
     # - Utilizando "raw" --> Utiliza la imagen preprocesada directamente
@@ -466,7 +468,6 @@ if __name__ == "__main__":
     # - 'pca' --> Utilizando "principal component Analysis (PCA) con tan finalidad de reducir la dimesnionalidad
     # a 50 componentes ENLACE: https://scikit-learn.org/stable/modules/decomposition.html 
     # Clasificadores : SVC-KNN-DTREE
-
     # EJECUCION RESULTADOS CARPETA --> Imágenes Ejecución:
     # Train path: C:\Users\david\OneDrive\Escritorio\Universidad\Universidad_2023-2024\SegundoCuatri\VisionArtificial\VisionArtificial\practica2_VA_23-24\Practica2_Datos_Alumnos\Practica2_Datos_Alumnos\train_ocr
     # Validation path: C:\Users\david\OneDrive\Escritorio\Universidad\Universidad_2023-2024\SegundoCuatri\VisionArtificial\VisionArtificial\practica2_VA_23-24\Practica2_Datos_Alumnos\Practica2_Datos_Alumnos\validation_ocr
@@ -500,5 +501,4 @@ if __name__ == "__main__":
     # Accuracy = 0.9374838709677419
     # Training classifier: dtree, Feature: hog, Dimensionality reduction: pca
     # Accuracy = 0.8220645161290323
-    # COMENTAR: Ctrl + K + C y DESCOMENTAR: Ctrl + K + U
     

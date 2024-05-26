@@ -1,7 +1,7 @@
 # EJERCICIO 3:
-# Generamos un nuevo script, que será ele encargado de procesar los paneles, localizar los caract
-#teres y ejecutar el clasificador que desarrollaste en el ejercicio anterior
-# El mejor clasificador en el ejercicio anterior es "svc" con "raw" y "none" reducción dimensional
+# Generamos un nuevo script, que será el encargado de procesar los paneles, localizar los caracteres y ejecutar el clasificador que desarrollaste en el ejercicio anterior
+# El mejor clasificador en el ejercicio anterior es "svc" con "raw" y "none" en reducción dimensional
+
 import os
 import cv2
 import numpy as np
@@ -20,6 +20,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
 import argparse
 
+# Función para preprocesar una imagen: convierte a escala de grises, aplica umbralización adaptativa y extrae la ROI más grande.
 def pre_procesado_image(img):
     if len(img.shape) == 3:
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -34,11 +35,13 @@ def pre_procesado_image(img):
         return roi.flatten()
     return cv2.resize(img_gray, (25, 25)).flatten() 
 
+# Función para extraer características HOG de una imagen, por si los otros clasificadores son mejores
 def extract_hog_features(img):
     roi = pre_procesado_image(img)
     hog_features = hog(roi.reshape(25, 25), pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=False)
     return hog_features
 
+# Paso 1: Detectar caracteres en la imagen usando umbralización y búsqueda de contornos.
 def detectar_caracteres(imagen):
     gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
     umbral = cv2.adaptiveThreshold(gris, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
@@ -50,6 +53,7 @@ def detectar_caracteres(imagen):
             rectangulos.append((x, y, w, h))
     return rectangulos
 
+# Paso 2: Encontrar líneas de texto utilizando RANSAC para agrupar caracteres alineados.
 def encontrar_lineas_de_texto(rectangulos):
     centros = [(x + w // 2, y + h // 2) for (x, y, w, h) in rectangulos]
     lineas = []
@@ -67,6 +71,7 @@ def encontrar_lineas_de_texto(rectangulos):
         lineas.append([centros[0]])
     return lineas
 
+# Paso 3: Clasificar cada carácter detectado usando el clasificador entrenado.
 def clasificar_caracteres(rectangulos, imagen, clasificador, label_encoder):
     caracteres = []
     for (x, y, w, h) in rectangulos:
@@ -75,6 +80,7 @@ def clasificar_caracteres(rectangulos, imagen, clasificador, label_encoder):
         caracter_predicho = clasificador.predict([roi_resized])[0]
         caracter = label_encoder.inverse_transform([caracter_predicho])[0]
         caracteres.append((x, y, caracter))
+    # Ordenar caracteres de izquierda a derecha y de arriba a abajo.
     caracteres.sort(key=lambda c: (c[1], c[0]))
     lineas = encontrar_lineas_de_texto([(x, y, 0, 0) for (x, y, _) in caracteres])
     texto_ocr = []
@@ -83,6 +89,7 @@ def clasificar_caracteres(rectangulos, imagen, clasificador, label_encoder):
         texto_ocr.append(linea_texto)
     return '+'.join(texto_ocr)
 
+# Función para procesar los paneles, aplicar la detección de caracteres y clasificación en cada uno.
 def procesar_paneles(path_paneles, clasificador, label_encoder):
     resultados = []
     for nombre_archivo in os.listdir(path_paneles):
@@ -97,6 +104,7 @@ def procesar_paneles(path_paneles, clasificador, label_encoder):
             resultados.append(f"{nombre_archivo};0;0;{imagen.shape[1]};{imagen.shape[0]};panel;1.0;{texto_ocr}")
     return resultados
 
+# Función para cargar datos de entrenamiento y extraer características.
 def cargar_datos_entrenamiento(path, feature_extractor):
     images = []
     labels = []
@@ -111,6 +119,7 @@ def cargar_datos_entrenamiento(path, feature_extractor):
                     labels.append(label)
     return np.array(images), np.array(labels)
 
+# Función para visualizar la matriz de confusión de manera detallada.
 def plot_confusion_matrix_detallada(cm, title='Confusion matrix', cmap='Blues'):
     plt.figure(figsize=(10, 10))
     plt.imshow(cm, interpolation='nearest', cmap=plt.get_cmap(cmap))
@@ -132,7 +141,7 @@ def plot_confusion_matrix_detallada(cm, title='Confusion matrix', cmap='Blues'):
                         fontsize=6)
 
 if __name__ == "__main__":
-
+    # Misma estructura de arranque en el Ejercicio 1 y 2
     parser = argparse.ArgumentParser(description='Trains and executes a given classifier for OCR over testing images')
     parser.add_argument('--classifier', type=str, default="svc", help='Classifier string name')
     parser.add_argument('--feature', type=str, default="raw", help='Feature extraction method (raw, hog)')
@@ -150,6 +159,7 @@ if __name__ == "__main__":
     print(f"Validation path: {validation_path}")
     print(f"Test path: {test_path}")
 
+    # Seleccionar el método de extracción de características aunque ya sabemos, cual es el mejor, se deja los demás por si se necesita realizar pruebas
     if args.feature == "raw":
         feature_extractor = pre_procesado_image
     elif args.feature == "hog":
@@ -157,7 +167,7 @@ if __name__ == "__main__":
     else:
         print(f"Error: Feature extractor {args.feature} no soportado.")
         exit()
-
+    # Cargar datos de entrenamiento y validación
     train_images, train_labels = cargar_datos_entrenamiento(train_path, feature_extractor)
     validation_images, validation_labels = cargar_datos_entrenamiento(validation_path, feature_extractor)
     
@@ -167,6 +177,7 @@ if __name__ == "__main__":
         print("Error: No se cargaron imágenes. Verifique las rutas y el formato de los archivos.")
         exit()
 
+    # Codificar las etiquetas en números
     label_encoder = LabelEncoder()
     combined_labels = list(train_labels) + list(validation_labels)
     label_encoder.fit(combined_labels)
@@ -174,6 +185,7 @@ if __name__ == "__main__":
     train_labels_encoded = label_encoder.transform(train_labels)
     validation_labels_encoded = label_encoder.transform(validation_labels)
 
+    # Aplicar reducción de dimensionalidad si es necesario
     if args.dim_reduction == "none":
         train_features = train_images
         validation_features = validation_images
@@ -185,6 +197,7 @@ if __name__ == "__main__":
         print(f"Error: Método de reducción de dimensionalidad {args.dim_reduction} no soportado.")
         exit()
 
+    # Entrenar el clasificador y evaluar la precisión
     if args.classifier == "svc":
         classifier = SVC()
         classifier.fit(train_features, train_labels_encoded)
@@ -220,7 +233,7 @@ if __name__ == "__main__":
     joblib.dump(classifier, 'svc_model.pkl')
     joblib.dump(label_encoder, 'label_encoder.pkl')
 
-    # Procesar los paneles
+    # Procesar los paneles, para luego la función --> "evaluar_resultados_test_ocr_panels.py"
     clasificador = joblib.load('svc_model.pkl')
     label_encoder = joblib.load('label_encoder.pkl')
     resultados = procesar_paneles(test_path, clasificador, label_encoder)
