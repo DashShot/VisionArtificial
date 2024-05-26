@@ -204,98 +204,13 @@ if __name__ == "__main__":
         #Modificar en la ejecución el default
         '--dim_reduction', type=str, default="none", help='Dimensionality reduction method (none, pca)')
     parser.add_argument(
-        '--train_path', default="./Practica2_Datos_Alumnos/Practica2_Datos_Alumnos/train_ocr", help='Select the training data dir')
+        '--train_path', default="./train_ocr", help='Select the training data dir')
     parser.add_argument(
-        '--validation_path', default="./Practica2_Datos_Alumnos/Practica2_Datos_Alumnos/validation_ocr", help='Select the validation data dir')
+        '--validation_path', default="./validation_ocr", help='Select the validation data dir')
     
     args = parser.parse_args()
 
-    train_path = os.path.abspath(args.train_path)
-    validation_path = os.path.abspath(args.validation_path)
-    print(f"Train path: {train_path}")
-    print(f"Validation path: {validation_path}")
-
-    if args.feature == "raw":
-        feature_extractor = pre_procesado_image
-    elif args.feature == "hog":
-        feature_extractor = extract_hog_features
-    else:
-        print(f"Error: Feature extractor {args.feature} no soportado.")
-        exit()
-
-    train_images, train_labels = carga_imagenes_carpeta(train_path, feature_extractor)
-    validation_images, validation_labels = carga_imagenes_carpeta(validation_path, feature_extractor)
-    
-    print(f"Loaded {len(train_images)} training images and {len(validation_images)} validation images.")
-
-    if len(train_images) == 0 or len(validation_images) == 0:
-        print("Error: No se cargaron imágenes. Verifique las rutas y el formato de los archivos.")
-        exit()
-
-    label_encoder = LabelEncoder()
-    combined_labels = train_labels + validation_labels
-    label_encoder.fit(combined_labels)
-    
-    train_labels_encoded = label_encoder.transform(train_labels)
-    validation_labels_encoded = label_encoder.transform(validation_labels)
-
-    train_images_dict = organizar_imagenes_en_diccionario(train_images, train_labels_encoded)
-    validation_images_dict = organizar_imagenes_en_diccionario(validation_images, validation_labels_encoded)
-
-    if args.dim_reduction == "none":
-        train_features = train_images
-        validation_features = validation_images
-    elif args.dim_reduction == "pca":
-        pca = PCA(n_components=50)
-        train_features = pca.fit_transform(train_images)
-        validation_features = pca.transform(validation_images)
-    else:
-        print(f"Error: Método de reducción de dimensionalidad {args.dim_reduction} no soportado.")
-        exit()
-
-    if args.classifier == "svc":
-        classifier = SVC()
-        classifier.fit(train_features, train_labels_encoded)
-        predicted_labels = classifier.predict(validation_features)
-        accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-        print("Accuracy = ", accuracy)
-        cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-        plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
-        plt.show()
-    elif args.classifier == "knn":
-        classifier = KNeighborsClassifier()
-        classifier.fit(train_features, train_labels_encoded)
-        predicted_labels = classifier.predict(validation_features)
-        accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-        print("Accuracy = ", accuracy)
-        cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-        plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
-        plt.show()
-    elif args.classifier == "dtree":
-        classifier = DecisionTreeClassifier()
-        classifier.fit(train_features, train_labels_encoded)
-        predicted_labels = classifier.predict(validation_features)
-        accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-        print("Accuracy = ", accuracy)
-        cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-        plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
-        plt.show()
-    elif args.classifier == "lda_normal_bayes":
-        classifier = LdaNormalBayesClassifier(ocr_char_size=(25, 25))
-        classifier.train(train_images_dict)
-        predicted_labels = []
-        for label, images in validation_images_dict.items():
-            for img in images:
-                predicted_labels.append(classifier.predict(img))
-        accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-        print("Accuracy = ", accuracy)
-        cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-        plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
-        plt.savefig(f"confusion_matrix_{args.classifier}.png")
-        plt.show()
-    else:
-        print(f"Error: Clasificador {args.classifier} no soportado.")
-        exit()
+   
         
     # args = parser.parse_args()
 

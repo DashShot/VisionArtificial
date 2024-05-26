@@ -98,3 +98,37 @@ if __name__ == "__main__":
     print(panels)
 
     plot_recognition_distance(panels_gt, panels)
+
+# #Ejercicio 3 RANSAC
+# MIN_MATCH_COUNT = 4
+# img2 = cv.imread('meninas_museo2.jpeg',0)          # imagen de query
+# img1 = cv.imread('meninas_plantilla.jpeg',0) # imagen de train
+# img1 = cv.resize(img1, (2*img1.shape[1],2*img1.shape[0]))
+# print(img1.shape)
+# print(img2.shape)
+
+# # Iniciar el detector y descriptor de puntos de interés ORB (Oriented FAST and Rotated BRIEF).
+# # ORB es básicamente una combinación del detector FAST y el descriptor BRIEF.
+# # ORB funciona igual de bien que SIFT en la detección (y mejor que SURF), siendo dos órdenes de magnitud más rápido. 
+# detector = cv.ORB_create()
+# descriptor = cv.ORB_create()
+#Cambiar por mejor Calsificador
+
+
+
+
+# # Encontrar los puntos de interés y los descriptores
+# kp1 = detector.detect(img1)
+# kp1, des1 = descriptor.compute(img1,kp1)
+# kp2 = detector.detect(img2) 
+# kp2, des2 = descriptor.compute(img2,kp2)
+
+# # Matcher de puntos de interés BFMatcher con distancia L1 para descriptores binarios
+# matcher = cv.BFMatcher(normType=cv.NORM_L1)
+# matches = matcher.knnMatch(des1,des2,k=2)
+
+# # Guardar todos los "matches buenos"
+# good = []
+# for m,n in matches:
+#     if m.distance < 0.7*n.distance:
+#         good.append(m)
