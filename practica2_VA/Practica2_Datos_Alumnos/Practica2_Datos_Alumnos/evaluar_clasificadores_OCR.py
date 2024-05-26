@@ -214,229 +214,229 @@ if __name__ == "__main__":
         
     # args = parser.parse_args()
 
-    # # 1) Cargar las imágenes de entrenamiento y sus etiquetas. 
-    # # También habrá que extraer los vectores de características asociados (en la parte básica 
-    # # umbralizar imágenes, pasar findContours y luego redimensionar)
-    # train_path = os.path.abspath(args.train_path)
-    # validation_path = os.path.abspath(args.validation_path)
-    # print(f"Train path: {train_path}")
-    # print(f"Validation path: {validation_path}")
+    # 1) Cargar las imágenes de entrenamiento y sus etiquetas. 
+    # También habrá que extraer los vectores de características asociados (en la parte básica 
+    # umbralizar imágenes, pasar findContours y luego redimensionar)
+    train_path = os.path.abspath(args.train_path)
+    validation_path = os.path.abspath(args.validation_path)
+    print(f"Train path: {train_path}")
+    print(f"Validation path: {validation_path}")
     
-    # #Con al carga de las imagenes, hay un problema: 
-    # #    - Cargando imagen: C:\Users\david\OneDrive\Escritorio\Universidad\Universidad_2023-2024\SegundoCuatri\VisionArtificial\VisionArtificial\practica2_VA_23-24\Practica2_Datos_Alumnos\Practica2_Datos_Alumnos\train_ocr\minúsculas\f\0180.png[ WARN:0@120.978] global loadsave.cpp:248 cv::findDecoder imread_('C:\Users\david\OneDrive\Escritorio\Universidad\Universidad_2023-2024\SegundoCuatri\VisionArtificial\VisionArtificial\practica2_VA_23-24\Practica2_Datos_Alumnos\Practica2_Datos_Alumnos\train_ocr\min├║sculas\f\0180.png'): can't open/read file: check file path/integrity
-    # #    Error al cargar la imagen: C:\Users\david\OneDrive\Escritorio\Universidad\Universidad_2023-2024\SegundoCuatri\VisionArtificial\VisionArtificial\practica2_VA_23-24\Practica2_Datos_Alumnos\Practica2_Datos_Alumnos\train_ocr\minúsculas\f\0180.png   
-    # #    Este es warning es debido a que se denomina las carpetas con acentos, por ello se renombrará los acentos
-    # # Cargar todas las imagenes
-    # # Añadimos opciones referentes al ejercicio 2, como el pre_procesado_imagenes o el neuvo el HOG
-    # if args.feature == "raw":
-    #     feature_extractor = pre_procesado_image
-    # elif args.feature == "hog":
-    #     feature_extractor = extract_hog_features
-    # else:
-    #     print(f"Error: Feature extractor {args.feature} no soportado.")
-    #     exit()
-    # train_images, train_labels = carga_imagenes_carpeta(train_path,feature_extractor)
-    # validation_images, validation_labels = carga_imagenes_carpeta(validation_path,feature_extractor)
+    #Con al carga de las imagenes, hay un problema: 
+    #    - Cargando imagen: C:\Users\david\OneDrive\Escritorio\Universidad\Universidad_2023-2024\SegundoCuatri\VisionArtificial\VisionArtificial\practica2_VA_23-24\Practica2_Datos_Alumnos\Practica2_Datos_Alumnos\train_ocr\minúsculas\f\0180.png[ WARN:0@120.978] global loadsave.cpp:248 cv::findDecoder imread_('C:\Users\david\OneDrive\Escritorio\Universidad\Universidad_2023-2024\SegundoCuatri\VisionArtificial\VisionArtificial\practica2_VA_23-24\Practica2_Datos_Alumnos\Practica2_Datos_Alumnos\train_ocr\min├║sculas\f\0180.png'): can't open/read file: check file path/integrity
+    #    Error al cargar la imagen: C:\Users\david\OneDrive\Escritorio\Universidad\Universidad_2023-2024\SegundoCuatri\VisionArtificial\VisionArtificial\practica2_VA_23-24\Practica2_Datos_Alumnos\Practica2_Datos_Alumnos\train_ocr\minúsculas\f\0180.png   
+    #    Este es warning es debido a que se denomina las carpetas con acentos, por ello se renombrará los acentos
+    # Cargar todas las imagenes
+    # Añadimos opciones referentes al ejercicio 2, como el pre_procesado_imagenes o el neuvo el HOG
+    if args.feature == "raw":
+        feature_extractor = pre_procesado_image
+    elif args.feature == "hog":
+        feature_extractor = extract_hog_features
+    else:
+        print(f"Error: Feature extractor {args.feature} no soportado.")
+        exit()
+    train_images, train_labels = carga_imagenes_carpeta(train_path,feature_extractor)
+    validation_images, validation_labels = carga_imagenes_carpeta(validation_path,feature_extractor)
     
-    # # Cargar 5 imagenes "PRUEBAS"
-    # # 1) Cargar las imágenes de entrenamiento y sus etiquetas.
-    # #train_path = os.path.abspath(args.train_path)   
-    # #validation_path = os.path.abspath(args.validation_path)
-    # #print(f"Train path: {train_path}")
-    # #print(f"Validation path: {validation_path}")
+    # Cargar 5 imagenes "PRUEBAS"
+    # 1) Cargar las imágenes de entrenamiento y sus etiquetas.
+    #train_path = os.path.abspath(args.train_path)   
+    #validation_path = os.path.abspath(args.validation_path)
+    #print(f"Train path: {train_path}")
+    #print(f"Validation path: {validation_path}")
 
-    # #train_images, train_labels = carga_algunas_imagenes_carpeta(train_path, num_images=5)
-    # #validation_images, validation_labels = carga_algunas_imagenes_carpeta(validation_path, num_images=5)
+    #train_images, train_labels = carga_algunas_imagenes_carpeta(train_path, num_images=5)
+    #validation_images, validation_labels = carga_algunas_imagenes_carpeta(validation_path, num_images=5)
     
-    # print(f"Loaded {len(train_images)} training images and {len(validation_images)} validation images.")
+    print(f"Loaded {len(train_images)} training images and {len(validation_images)} validation images.")
 
-    # if len(train_images) == 0 or len(validation_images) == 0:
-    #     print("Error: No se cargaron imágenes. Verifique las rutas y el formato de los archivos.")
-    #     exit()
-    # # Visualizar algunas imágenes para comprobar
-    # #visualizar_imagenes(train_images, train_labels, num=5)
+    if len(train_images) == 0 or len(validation_images) == 0:
+        print("Error: No se cargaron imágenes. Verifique las rutas y el formato de los archivos.")
+        exit()
+    # Visualizar algunas imágenes para comprobar
+    #visualizar_imagenes(train_images, train_labels, num=5)
 
-    # # Convertir las etiquetas a números usando LabelEncoder
-    # label_encoder = LabelEncoder()
-    # combined_labels = train_labels + validation_labels
-    # label_encoder.fit(combined_labels)
+    # Convertir las etiquetas a números usando LabelEncoder
+    label_encoder = LabelEncoder()
+    combined_labels = train_labels + validation_labels
+    label_encoder.fit(combined_labels)
     
-    # train_labels_encoded = label_encoder.transform(train_labels)
-    # validation_labels_encoded = label_encoder.transform(validation_labels)
+    train_labels_encoded = label_encoder.transform(train_labels)
+    validation_labels_encoded = label_encoder.transform(validation_labels)
 
-    # # Organizar imágenes en diccionario para LdaNormalBayesClassifier
-    # train_images_dict = organizar_imagenes_en_diccionario(train_images, train_labels_encoded)
-    # validation_images_dict = organizar_imagenes_en_diccionario(validation_images, validation_labels_encoded)
-    # # 2) Load training and validation data
-    # # También habrá que extraer los vectores de características asociados (en la parte básica 
-    # # umbralizar imágenes, pasar findContours y luego redimensionar)
-    # # 2) Preparar datos de entrenamiento y validación
-    # # gt_labels (ground truth) es el mismo que validation_labels
-    # # Eliminamos el gt_labels para el ejercicio dos, ya que lo bamos a gestionar con o sin dimensionalidad 
-    # #gt_labels = validation_labels
-    # # Aplicar reducción de dimensionalidad si es necesario
-    # if args.dim_reduction == "none":
-    #     train_features = train_images
-    #     validation_features = validation_images
-    # elif args.dim_reduction == "pca":
-    #     pca = PCA(n_components=50)
-    #     train_features = pca.fit_transform(train_images)
-    #     validation_features = pca.transform(validation_images)
-    # else:
-    #     print(f"Error: Método de reducción de dimensionalidad {args.dim_reduction} no soportado.")
-    #     exit()
-    # # 3) Entrenar clasificador
-    # # Declaramos los diferentes tipos de clasificador "ESTO ES UNA PARTE DEL EJERICIO 2"
-    # # Si lo ejecutamos en visual estudio, dar los campos de "classifier", directamente en el main 
-    # # Antes de la ejecución.
-    # if args.classifier == "svc": #--> Por defecto
-    #     # svc --> Support Vector Classifier
-    #     classifier = SVC()
-    #     #classifier.fit(train_images, train_labels)
-    #     classifier.fit(train_features, train_labels_encoded)
-    #     # 4) Ejecutar el clasificador sobre los datos de validación
-    #     #predicted_labels = classifier.predict(validation_images)
-    #     predicted_labels = classifier.predict(validation_features)
-    #     # 5) Evaluar los resultados
-    #     #accuracy = accuracy_score(gt_labels, predicted_labels)
-    #     accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-    #     print("Accuracy = ", accuracy)
-    #     # Mostrar matriz de confusión
-    #     #cm = confusion_matrix(gt_labels, predicted_labels)
-    #     #plot_confusion_matrix(cm)
-    #     #plt.show()
-    #     # Mostrar matriz de confusión más detallada
-    #     cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-    #     #plot_confusion_matrix_detallada(cm)
-    #     plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
-    #     plt.show()
-    # elif args.classifier == "knn":
-    #     # K-Nearest Neight
-    #     classifier = KNeighborsClassifier()
-    #     classifier.fit(train_features, train_labels_encoded)
-    #     # 4) Ejecutar el clasificador sobre los datos de validación
-    #     #predicted_labels = classifier.predict(validation_images)
-    #     predicted_labels = classifier.predict(validation_features)
-    #     # 5) Evaluar los resultados
-    #     #accuracy = accuracy_score(gt_labels, predicted_labels)
-    #     accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-    #     print("Accuracy = ", accuracy)
-    #     # Mostrar matriz de confusión
-    #     #cm = confusion_matrix(gt_labels, predicted_labels)
-    #     #plot_confusion_matrix(cm)
-    #     #plt.show()
-    #     # Mostrar matriz de confusión más detallada
-    #     cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-    #     #plot_confusion_matrix_detallada(cm)
-    #     plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
-    #     plt.show()
-    # elif args.classifier == "dtree":
-    #     # Decission Tree
-    #     classifier = DecisionTreeClassifier()
-    #     classifier.fit(train_features, train_labels_encoded)
-    #     # 4) Ejecutar el clasificador sobre los datos de validación
-    #     #predicted_labels = classifier.predict(validation_images)
-    #     predicted_labels = classifier.predict(validation_features)
-    #     # 5) Evaluar los resultados
-    #     #accuracy = accuracy_score(gt_labels, predicted_labels)
-    #     accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-    #     print("Accuracy = ", accuracy)
-    #     # Mostrar matriz de confusión
-    #     #cm = confusion_matrix(gt_labels, predicted_labels)
-    #     #plot_confusion_matrix(cm)
-    #     #plt.show()
-    #     # Mostrar matriz de confusión más detallada
-    #     cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-    #     plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
-    #     plt.show()
-    # elif args.classifier == "lda_normal_bayes":
-    #     classifier = LdaNormalBayesClassifier(ocr_char_size=(25, 25))
-    #     classifier.train(train_images_dict)
+    # Organizar imágenes en diccionario para LdaNormalBayesClassifier
+    train_images_dict = organizar_imagenes_en_diccionario(train_images, train_labels_encoded)
+    validation_images_dict = organizar_imagenes_en_diccionario(validation_images, validation_labels_encoded)
+    # 2) Load training and validation data
+    # También habrá que extraer los vectores de características asociados (en la parte básica 
+    # umbralizar imágenes, pasar findContours y luego redimensionar)
+    # 2) Preparar datos de entrenamiento y validación
+    # gt_labels (ground truth) es el mismo que validation_labels
+    # Eliminamos el gt_labels para el ejercicio dos, ya que lo bamos a gestionar con o sin dimensionalidad 
+    #gt_labels = validation_labels
+    # Aplicar reducción de dimensionalidad si es necesario
+    if args.dim_reduction == "none":
+        train_features = train_images
+        validation_features = validation_images
+    elif args.dim_reduction == "pca":
+        pca = PCA(n_components=50)
+        train_features = pca.fit_transform(train_images)
+        validation_features = pca.transform(validation_images)
+    else:
+        print(f"Error: Método de reducción de dimensionalidad {args.dim_reduction} no soportado.")
+        exit()
+    # 3) Entrenar clasificador
+    # Declaramos los diferentes tipos de clasificador "ESTO ES UNA PARTE DEL EJERICIO 2"
+    # Si lo ejecutamos en visual estudio, dar los campos de "classifier", directamente en el main 
+    # Antes de la ejecución.
+    if args.classifier == "svc": #--> Por defecto
+        # svc --> Support Vector Classifier
+        classifier = SVC()
+        #classifier.fit(train_images, train_labels)
+        classifier.fit(train_features, train_labels_encoded)
+        # 4) Ejecutar el clasificador sobre los datos de validación
+        #predicted_labels = classifier.predict(validation_images)
+        predicted_labels = classifier.predict(validation_features)
+        # 5) Evaluar los resultados
+        #accuracy = accuracy_score(gt_labels, predicted_labels)
+        accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
+        print("Accuracy = ", accuracy)
+        # Mostrar matriz de confusión
+        #cm = confusion_matrix(gt_labels, predicted_labels)
+        #plot_confusion_matrix(cm)
+        #plt.show()
+        # Mostrar matriz de confusión más detallada
+        cm = confusion_matrix(validation_labels_encoded, predicted_labels)
+        #plot_confusion_matrix_detallada(cm)
+        plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
+        plt.show()
+    elif args.classifier == "knn":
+        # K-Nearest Neight
+        classifier = KNeighborsClassifier()
+        classifier.fit(train_features, train_labels_encoded)
+        # 4) Ejecutar el clasificador sobre los datos de validación
+        #predicted_labels = classifier.predict(validation_images)
+        predicted_labels = classifier.predict(validation_features)
+        # 5) Evaluar los resultados
+        #accuracy = accuracy_score(gt_labels, predicted_labels)
+        accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
+        print("Accuracy = ", accuracy)
+        # Mostrar matriz de confusión
+        #cm = confusion_matrix(gt_labels, predicted_labels)
+        #plot_confusion_matrix(cm)
+        #plt.show()
+        # Mostrar matriz de confusión más detallada
+        cm = confusion_matrix(validation_labels_encoded, predicted_labels)
+        #plot_confusion_matrix_detallada(cm)
+        plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
+        plt.show()
+    elif args.classifier == "dtree":
+        # Decission Tree
+        classifier = DecisionTreeClassifier()
+        classifier.fit(train_features, train_labels_encoded)
+        # 4) Ejecutar el clasificador sobre los datos de validación
+        #predicted_labels = classifier.predict(validation_images)
+        predicted_labels = classifier.predict(validation_features)
+        # 5) Evaluar los resultados
+        #accuracy = accuracy_score(gt_labels, predicted_labels)
+        accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
+        print("Accuracy = ", accuracy)
+        # Mostrar matriz de confusión
+        #cm = confusion_matrix(gt_labels, predicted_labels)
+        #plot_confusion_matrix(cm)
+        #plt.show()
+        # Mostrar matriz de confusión más detallada
+        cm = confusion_matrix(validation_labels_encoded, predicted_labels)
+        plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
+        plt.show()
+    elif args.classifier == "lda_normal_bayes":
+        classifier = LdaNormalBayesClassifier(ocr_char_size=(25, 25))
+        classifier.train(train_images_dict)
 
-    #     predicted_labels = []
-    #     for label, images in validation_images_dict.items():
-    #         for img in images:
-    #             predicted_labels.append(classifier.predict(img))
+        predicted_labels = []
+        for label, images in validation_images_dict.items():
+            for img in images:
+                predicted_labels.append(classifier.predict(img))
 
-    #     accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-    #     print("Accuracy = ", accuracy)
+        accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
+        print("Accuracy = ", accuracy)
 
-    #     cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-    #     plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
-    #     plt.savefig(f"confusion_matrix_{args.classifier}.png")
-    #     plt.show()
-    # else:
-    #     print(f"Error: Clasificador {args.classifier} no soportado.")
-    #     exit()
+        cm = confusion_matrix(validation_labels_encoded, predicted_labels)
+        plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {args.classifier}, {args.feature}, {args.dim_reduction}")
+        plt.savefig(f"confusion_matrix_{args.classifier}.png")
+        plt.show()
+    else:
+        print(f"Error: Clasificador {args.classifier} no soportado.")
+        exit()
     
     
-    # # Pruebas de Ejecuciones con todas las posibilidades
-    # args = parser.parse_args()
+    # Pruebas de Ejecuciones con todas las posibilidades
+    args = parser.parse_args()
 
-    # train_path = os.path.abspath(args.train_path)
-    # validation_path = os.path.abspath(args.validation_path)
-    # print(f"Train path: {train_path}")
-    # print(f"Validation path: {validation_path}")
+    train_path = os.path.abspath(args.train_path)
+    validation_path = os.path.abspath(args.validation_path)
+    print(f"Train path: {train_path}")
+    print(f"Validation path: {validation_path}")
 
-    # # Posibles configuraciones
-    # classifiers = {
-    #     "svc": SVC(),
-    #     "knn": KNeighborsClassifier(),
-    #     "dtree": DecisionTreeClassifier()
-    # }
+    # Posibles configuraciones
+    classifiers = {
+        "svc": SVC(),
+        "knn": KNeighborsClassifier(),
+        "dtree": DecisionTreeClassifier()
+    }
 
-    # features = {
-    #     "raw": pre_procesado_image,
-    #     "hog": extract_hog_features
-    # }
+    features = {
+        "raw": pre_procesado_image,
+        "hog": extract_hog_features
+    }
 
-    # dim_reductions = {
-    #     "none": None,
-    #     "pca": PCA(n_components=50)
-    # }
+    dim_reductions = {
+        "none": None,
+        "pca": PCA(n_components=50)
+    }
 
-    # for feature_name, feature_extractor in features.items():
-    #     train_images, train_labels = carga_imagenes_carpeta(train_path, feature_extractor)
-    #     validation_images, validation_labels = carga_imagenes_carpeta(validation_path, feature_extractor)
-    #     print(f"Loaded {len(train_images)} training images and {len(validation_images)} validation images.")
+    for feature_name, feature_extractor in features.items():
+        train_images, train_labels = carga_imagenes_carpeta(train_path, feature_extractor)
+        validation_images, validation_labels = carga_imagenes_carpeta(validation_path, feature_extractor)
+        print(f"Loaded {len(train_images)} training images and {len(validation_images)} validation images.")
 
-    #     if len(train_images) == 0 or len(validation_images) == 0:
-    #         print("Error: No se cargaron imágenes. Verifique las rutas y el formato de los archivos.")
-    #         exit()
+        if len(train_images) == 0 or len(validation_images) == 0:
+            print("Error: No se cargaron imágenes. Verifique las rutas y el formato de los archivos.")
+            exit()
 
-    #     label_encoder = LabelEncoder()
-    #     combined_labels = train_labels + validation_labels
-    #     label_encoder.fit(combined_labels)
+        label_encoder = LabelEncoder()
+        combined_labels = train_labels + validation_labels
+        label_encoder.fit(combined_labels)
         
-    #     train_labels_encoded = label_encoder.transform(train_labels)
-    #     validation_labels_encoded = label_encoder.transform(validation_labels)
+        train_labels_encoded = label_encoder.transform(train_labels)
+        validation_labels_encoded = label_encoder.transform(validation_labels)
 
-    #     for dim_red_name, dim_reducer in dim_reductions.items():
-    #         if dim_reducer is None:
-    #             train_features = train_images
-    #             validation_features = validation_images
-    #         else:
-    #             dim_reducer.fit(train_images)
-    #             train_features = dim_reducer.transform(train_images)
-    #             validation_features = dim_reducer.transform(validation_images)
+        for dim_red_name, dim_reducer in dim_reductions.items():
+            if dim_reducer is None:
+                train_features = train_images
+                validation_features = validation_images
+            else:
+                dim_reducer.fit(train_images)
+                train_features = dim_reducer.transform(train_images)
+                validation_features = dim_reducer.transform(validation_images)
 
-    #         for clf_name, classifier in classifiers.items():
-    #             print(f"Training classifier: {clf_name}, Feature: {feature_name}, Dimensionality reduction: {dim_red_name}")
+            for clf_name, classifier in classifiers.items():
+                print(f"Training classifier: {clf_name}, Feature: {feature_name}, Dimensionality reduction: {dim_red_name}")
 
-    #             classifier.fit(train_features, train_labels_encoded)
-    #             predicted_labels = classifier.predict(validation_features)
+                classifier.fit(train_features, train_labels_encoded)
+                predicted_labels = classifier.predict(validation_features)
 
-    #             accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
-    #             print(f"Accuracy = {accuracy}")
+                accuracy = accuracy_score(validation_labels_encoded, predicted_labels)
+                print(f"Accuracy = {accuracy}")
 
-    #             cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-    #             #plot_confusion_matrix(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}")
-    #             plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}")
-    #             plt.show()
-    #             #cm = confusion_matrix(validation_labels_encoded, predicted_labels)
-    #             #filename = f"confusion_matrix_{clf_name}_{feature_name}_{dim_red_name}.png"
-    #             #plot_confusion_matrix(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}", filename=filename)
-    #             #print(f"Confusion matrix saved as {filename}")
+                cm = confusion_matrix(validation_labels_encoded, predicted_labels)
+                #plot_confusion_matrix(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}")
+                plot_confusion_matrix_detallada(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}")
+                plt.show()
+                #cm = confusion_matrix(validation_labels_encoded, predicted_labels)
+                #filename = f"confusion_matrix_{clf_name}_{feature_name}_{dim_red_name}.png"
+                #plot_confusion_matrix(cm, title=f"Confusion matrix: {clf_name}, {feature_name}, {dim_red_name}", filename=filename)
+                #print(f"Confusion matrix saved as {filename}")
     
     # BASES-ENLACE: https://www.aprendemachinelearning.com/clasificacion-de-imagenes-en-python/
     # Con la prueba de 5 imagenes, no irá indicando una matriz de confusión
